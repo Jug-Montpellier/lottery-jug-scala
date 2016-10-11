@@ -1,0 +1,7 @@
+target/
+*~
+.envrc
+#ides
+.ensime
+.ensime_cache/
+.idea/
