@@ -35,8 +35,5 @@ libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.0" % "test")
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
-
-
-
-
+mainClass in Compile := Some("lottery.WebServer")
 
