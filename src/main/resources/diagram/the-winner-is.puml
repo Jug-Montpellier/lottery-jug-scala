@@ -1,0 +1,26 @@
+@startuml
+Actor me
+participant LotteryServer
+participant Lottery
+participant LotteryRequester
+participant EventBrite
+me -> LotteryServer: Ask a winner
+LotteryServer -> Lottery: Ask a winner
+activate Lottery
+Lottery -> LotteryRequester: Ask for attentees
+LotteryRequester -> EventBrite
+EventBrite -> LotteryRequester
+LotteryRequester -> Lottery: Attendees list
+activate Lottery
+loop remaining pages
+Lottery -> LotteryRequester: Ask for attentees
+LotteryRequester -> EventBrite
+EventBrite -> LotteryRequester
+LotteryRequester -> Lottery: Attendees list
+end
+deactivate Lottery
+
+Lottery -> LotteryServer: Winner
+deactivate Lottery
+
+@enduml

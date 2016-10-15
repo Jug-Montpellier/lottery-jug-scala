@@ -22,12 +22,14 @@ object WebServer extends App {
 
   implicit def htmlUTF8(content: String): StandardRoute = complete(HttpResponse(entity = HttpEntity(ContentTypes.`text/html(UTF-8)`, content)))
 
+  val lottery = system.actorOf(Props[Lottery], "lottery")
+
   val route =
     path("") {
       get {
         completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
           cb =>
-            system.actorOf(Props(new EventBriteHttpClient(cb))) ! "28525090313"
+            lottery ! LotteryProtocol.WinnerRequest("28525090313", 3, cb)
         }
       }
     }
