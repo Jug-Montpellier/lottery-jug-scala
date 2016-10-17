@@ -2,11 +2,14 @@ package lottery
 
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.common.EntityStreamingSupport
 import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.StandardRoute
-import akka.stream.ActorMaterializer
+import akka.stream.{ActorMaterializer, SourceShape}
+import akka.stream.scaladsl.{FileIO, Source, StreamConverters}
+import com.sun.imageio.spi.OutputStreamImageOutputStreamSpi
 
 import scala.io.StdIn
 import scala.language.implicitConversions
@@ -24,14 +27,28 @@ object WebServer extends App {
 
   val lottery = system.actorOf(Props[Lottery], "lottery")
 
+
   val route =
     path("") {
       get {
-        completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
-          cb =>
-            lottery ! LotteryProtocol.WinnerRequest("28525090313", 3, cb)
-        }
+        complete(HttpEntity(contentType = MediaTypes.`text/html`.withCharset(HttpCharsets.`UTF-8`), StreamConverters.fromInputStream(() => getClass.getResourceAsStream(s"/public/index.html"))))
       }
+    } ~
+      path("winners") {
+        get {
+          parameters('n.as[Int]) {
+            (n: Int) =>
+              completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
+                cb =>
+                  lottery ! LotteryProtocol.WinnerRequest("28525090313", n, cb)
+              }
+          }
+        }
+      } ~ path("diagram" / Remaining) {
+      fileName =>
+        get {
+          complete(HttpEntity(contentType = MediaTypes.`image/png`, StreamConverters.fromInputStream(() => getClass.getResourceAsStream(s"/diagram/$fileName"))))
+        }
     }
 
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", 8080)
