@@ -8,6 +8,12 @@ export EVENTBRITE_TOKEN=A_VALID_TOKEN
 sbt
 ```
 
+To build:
+
+```
+sbt package
+```
+
 In sbt:
 
 ```
