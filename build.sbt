@@ -1,4 +1,5 @@
 enablePlugins(JDKPackagerPlugin)
+enablePlugins(PlantUMLPlugin)
 
 organization := "org.jug-montpellier"
 
@@ -39,24 +40,5 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 
 mainClass in Compile := Some("lottery.WebServer")
 
-resourceGenerators in Compile <+= Def.task[Seq[File]] {
-  sys.env.get("PLANTUML").map {
-    path =>
-      val inputs = IO.listFiles(baseDirectory.value / "src/main/resources/diagram")
-      val inputCLIParam = inputs.map(_.getAbsolutePath).mkString(" ")
-      val output = (resourceManaged in Compile).value / "diagram"
-      val outputs = {
-        val r = raw"\.puml$$".r
-        inputs.map(f => output / r.replaceAllIn(f.getName, ".png"))
-      }
-      outputs.foreach(println)
-      IO.createDirectory(output)
-
-      Process(s"plantuml  -o $output $inputCLIParam ").lines.foreach(println)
-
-      outputs.toSeq
-
-  }.getOrElse(Nil)
-}
 
 
