@@ -1,3 +1,5 @@
+enablePlugins(JDKPackagerPlugin)
+
 organization := "org.jug-montpellier"
 
 name := "lottery-jug-scala"
