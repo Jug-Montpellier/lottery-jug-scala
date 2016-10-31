@@ -17,7 +17,7 @@ class LotteryRequester(attendeesRequest: AttendeesRequest) extends Actor with Ac
 
   val events = s"https://www.eventbriteapi.com/v3/events/search/?token=$token&organizer.id=$organizerId"
 
-  def attendees(eventId: String, page: Int = 1) = s"https://www.eventbriteapi.com/v3/events/$eventId/attendees/?token=$token&page=1"
+  def attendees(eventId: String, page: Int ) = s"https://www.eventbriteapi.com/v3/events/$eventId/attendees/?token=$token&page=$page"
 
   val http = Http(context.system)
 
@@ -35,30 +35,40 @@ class LotteryRequester(attendeesRequest: AttendeesRequest) extends Actor with Ac
     import EventBriteParser._
     import de.heikoseeberger.akkahttpcirce.CirceSupport._
 
-    http.singleRequest(HttpRequest(uri = attendees(attendeesRequest.request.eventId)))
-      .flatMap(s => Unmarshal(s.entity).to[Attendees])
-      .map {
-        a =>
-          awaitedPages = (1 to a.pagination.page_count).toSet
-          awaitedPages.drop(1)
-            .foreach {
-              page =>
-                http.singleRequest(HttpRequest(uri = attendees(attendeesRequest.request.eventId)))
-                  .flatMap(s => Unmarshal(s.entity).to[Attendees])
-                  .map(a => (page, a)).pipeTo(self)
-            }
-          (1, a)
-      }
-      .pipeTo(self)
+    attendeesRequest.request.eventId.map {
+      eventId =>
+        http.singleRequest(HttpRequest(uri = attendees(eventId, 1)))
+          .flatMap(s => Unmarshal(s.entity).to[Attendees])
+          .map {
+            a =>
+              awaitedPages = (1 to a.pagination.page_count).toSet
+              awaitedPages.drop(1)
+                .foreach {
+                  page =>
+                    http.singleRequest(HttpRequest(uri = attendees(eventId, page)))
+                      .flatMap(s => Unmarshal(s.entity).to[Attendees])
+                      .map(a => (page, a)).pipeTo(self)
+                }
+              (1, a)
+          }
+          .pipeTo(self).recover {
+          case e =>
+            attendeesRequest.sender ! AttenteesResponse(attendeesRequest.request, attendees)
+            context.stop(self)
+            log.error(e, attendeesRequest.request.toString)
+        }
+    }
+
+
   }
 
   override def receive: Receive = {
 
     case (page: Int, a: Attendees) =>
-        attendees ++= a.attendees
-        awaitedPages -= page
+      attendees ++= a.attendees
+      awaitedPages -= page
 
-      if(awaitedPages.isEmpty)
+      if (awaitedPages.isEmpty)
         attendeesRequest.sender ! AttenteesResponse(attendeesRequest.request, attendees)
 
       context.stop(self)

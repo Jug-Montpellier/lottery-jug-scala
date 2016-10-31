@@ -69,7 +69,7 @@ object WebServer extends App {
             (n: Int) =>
               completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
                 cb =>
-                  lottery ! LotteryProtocol.WinnerRequest("28525090313", n, cb)
+                  lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
               }
           }
         }
