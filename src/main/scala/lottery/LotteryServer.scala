@@ -87,10 +87,6 @@ object WebServer extends App {
 
   println(s"Server online at http://localhost:8080/\nPress Ctrl-C or send SIGTERM to stop...")
 
-  StdIn.readLine() // let it run until user presses return
-  bindingFuture
-    .flatMap(_.unbind()) // trigger unbinding from the port
-    .onComplete(_ => system.terminate()) // and shutdown when done
 
   sys.addShutdownHook({
     println("Graceful stop")
@@ -98,5 +94,10 @@ object WebServer extends App {
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done
   })
+  
+  StdIn.readLine() // let it run until user presses return
+  bindingFuture
+    .flatMap(_.unbind()) // trigger unbinding from the port
+    .onComplete(_ => system.terminate()) // and shutdown when done
 
 }
