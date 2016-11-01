@@ -34,6 +34,8 @@ libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.21"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.7"
 
+libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.1.8"
+
 //libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "2.14.0"
 
 libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.0" % "test")

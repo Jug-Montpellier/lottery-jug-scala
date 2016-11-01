@@ -34,6 +34,7 @@ object WebServer extends App {
 
   /**
     * Complete the request by streaming a classpath content.
+    *
     * @param path
     * @return
     */
@@ -56,6 +57,7 @@ object WebServer extends App {
 
   val lottery = system.actorOf(Props[Lottery], "lottery")
 
+  import ch.megard.akka.http.cors.CorsDirectives.cors
 
   val route =
     path("") {
@@ -64,6 +66,11 @@ object WebServer extends App {
       }
     } ~
       path("winners") {
+        options {
+          cors() {
+            complete(204)
+          }
+        } ~
         get {
           parameters('nb.as[Int]) {
             (nb: Int) =>
