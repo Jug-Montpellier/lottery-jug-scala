@@ -72,11 +72,11 @@ object WebServer extends App {
           }
         } ~
         get {
-          parameters('nb.as[Int]) {
-            (nb: Int) =>
+          parameters('n.as[Int]) {
+            (n: Int) =>
               completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
                 cb =>
-                  lottery ! LotteryProtocol.WinnerRequest(None, nb, Some(cb))
+                  lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
               }
           }
         }
