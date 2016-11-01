@@ -72,7 +72,7 @@ object WebServer extends App {
           }
         } ~
         get {
-          parameters('n.as[Int]) {
+          parameters('nb.as[Int]) {
             (n: Int) =>
               completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
                 cb =>
