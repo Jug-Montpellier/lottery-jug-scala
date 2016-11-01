@@ -1,9 +1,7 @@
 package lottery
 
 import akka.actor.{ActorSystem, Props}
-
 import akka.http.scaladsl.marshalling.ToResponseMarshaller
-
 import akka.http.scaladsl.server.StandardRoute
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.StreamConverters
@@ -11,13 +9,15 @@ import akka.stream.scaladsl.StreamConverters
 import scala.language.implicitConversions
 import de.heikoseeberger.akkahttpcirce.CirceSupport._
 import io.circe.generic.auto._
-
-
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server._
 import StatusCodes._
 import Directives._
+import akka.http.javadsl.model.headers.{AccessControlAllowMethods, AccessControlAllowOrigin}
+import akka.http.scaladsl.model.headers.HttpOriginRange
+
+import scala.io.StdIn
 
 object WebServer extends App {
 
@@ -57,8 +57,6 @@ object WebServer extends App {
 
   val lottery = system.actorOf(Props[Lottery], "lottery")
 
-  import ch.megard.akka.http.cors.CorsDirectives.cors
-
   val route =
     path("") {
       get {
@@ -66,17 +64,15 @@ object WebServer extends App {
       }
     } ~
       path("winners") {
-        options {
-          cors() {
-            complete(204)
-          }
-        } ~
         get {
           parameters('nb.as[Int]) {
             (n: Int) =>
-              completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
-                cb =>
-                  lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
+              respondWithHeaders(AccessControlAllowOrigin.create(HttpOriginRange.*), AccessControlAllowMethods.create(HttpMethods.GET, HttpMethods.OPTIONS)) {
+
+                completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
+                  cb =>
+                    lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
+                }
               }
           }
         }
@@ -90,6 +86,11 @@ object WebServer extends App {
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", 8080)
 
   println(s"Server online at http://localhost:8080/\nPress Ctrl-C or send SIGTERM to stop...")
+
+  StdIn.readLine() // let it run until user presses return
+  bindingFuture
+    .flatMap(_.unbind()) // trigger unbinding from the port
+    .onComplete(_ => system.terminate()) // and shutdown when done
 
   sys.addShutdownHook({
     println("Graceful stop")
