@@ -71,8 +71,8 @@ class LotteryRequester(attendeesRequest: AttendeesRequest) extends Actor with Ac
       if (awaitedPages.isEmpty)
         attendeesRequest.sender ! AttenteesResponse(attendeesRequest.request, attendees)
 
+      log.info(attendees.size + " attendees")
       context.stop(self)
-      log.info("Bye bye")
     case e =>
       log.warning(s"WTF $e")
 

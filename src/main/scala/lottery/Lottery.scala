@@ -56,6 +56,7 @@ class Lottery extends Actor with ActorLogging {
           log.warning(s"More than one event is open !\n choosing ${events(0)}")
         else
           log.info(s"Current event ${events(0)}")
+        self ! RefreshCache(WinnerRequest(currentEventId, 0, None ))
       }
 
 
