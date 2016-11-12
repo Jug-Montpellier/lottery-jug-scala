@@ -67,7 +67,14 @@ object WebServer extends App {
         get {
           parameters('nb.as[Int]) {
             (n: Int) =>
-              if(n>0)
+              n match {
+                case 0 =>
+                completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
+                  cb =>
+                    cb(List())
+                }
+ 
+                case i if i > 0 =>
               respondWithHeaders(AccessControlAllowOrigin.create(HttpOriginRange.*), AccessControlAllowMethods.create(HttpMethods.GET, HttpMethods.OPTIONS)) {
 
                 completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
@@ -75,9 +82,10 @@ object WebServer extends App {
                     lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
                 }
               }
-              else
+              case _ => 
                 complete(HttpResponse(status = StatusCodes.BadRequest))
-          }
+              }
+	  }
         } ~ get {
           complete(HttpResponse(status = StatusCodes.BadRequest))
         }
