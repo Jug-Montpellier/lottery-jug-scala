@@ -1,6 +1,6 @@
 package lottery
 
-import cats.data.Xor.Right
+import cats.data.Xor.{Left, Right}
 import java.nio.ByteBuffer
 import java.nio.file.{Files, Paths}
 import org.scalatest.Matchers
@@ -19,12 +19,19 @@ class AttendeesParseTestSuite extends WordSpec with Matchers {
 
   "Parser " must {
     "parse attendees" in {
-      EventBriteParser.parse("/attendees.json") match {
-	case Right(att) =>
-          att.attendees.size  shouldEqual 6
-	case _ => fail()
+      EventBriteParser.parseEvent("/attendees.json") match {
+        case Right(att) =>
+          att.attendees.size shouldEqual 6
+        case _ => fail()
       }
 
+    }
+
+    "Parse event list" in {
+      EventBriteParser.parseEventList("/events.json") match {
+        case Right(s) =>
+        case Left(e) => fail(e.getMessage)
+      }
     }
   }
 

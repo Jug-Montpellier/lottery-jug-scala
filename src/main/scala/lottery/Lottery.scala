@@ -24,9 +24,13 @@ object LotteryProtocol {
 
   case object RefreshCurrentEventId
 
+  case class Events(cb: (List[Event]) => Unit)
+
 }
 
 class Lottery extends Actor with ActorLogging {
+
+
 
   import LotteryConf._
   import LotteryProtocol._
@@ -36,6 +40,8 @@ class Lottery extends Actor with ActorLogging {
   private var currentEventId: Option[String] = None
 
   private var cache = Map[String, List[Attendeed]]()
+
+
 
   override def preStart(): Unit = {
     super.preStart()
@@ -47,6 +53,8 @@ class Lottery extends Actor with ActorLogging {
   def take(n: Int, attentees: List[Attendeed]) = shuffle(attentees).take(n)
 
   override def receive: Receive = {
+
+
     case EventPage(pagination, events) =>
       if (events.size == 0) {
         currentEventId = None
@@ -61,6 +69,14 @@ class Lottery extends Actor with ActorLogging {
         self ! RefreshCache(WinnerRequest(currentEventId, 0, None))
 
       }
+
+    case Events(cb) =>
+      val response = cache.map {
+        case (k,v) => Event(k, Some(v.size))
+      }
+
+      cb(response.toList)
+
 
 
     case winnerrequest@WinnerRequest(eventId, n, cb) => eventId.orElse(currentEventId).map {

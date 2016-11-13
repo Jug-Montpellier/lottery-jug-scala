@@ -62,34 +62,40 @@ object WebServer extends App {
       get {
         streamFromClasspath("/public/index.html")
       }
-    } ~
-      path("winners") {
-        get {
-          parameters('nb.as[Int]) {
-            (n: Int) =>
-              n match {
-                case 0 =>
+    } ~ path("events") {
+      get {
+        completeWith(implicitly[ToResponseMarshaller[List[Event]]]) {
+          cb =>
+            lottery ! LotteryProtocol.Events(cb)
+        }
+      }
+    } ~ path("winners") {
+      get {
+        parameters('nb.as[Int]) {
+          (n: Int) =>
+            n match {
+              case 0 =>
                 completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
                   cb =>
                     cb(List())
                 }
- 
-                case i if i > 0 =>
-              respondWithHeaders(AccessControlAllowOrigin.create(HttpOriginRange.*), AccessControlAllowMethods.create(HttpMethods.GET, HttpMethods.OPTIONS)) {
 
-                completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
-                  cb =>
-                    lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
+              case i if i > 0 =>
+                respondWithHeaders(AccessControlAllowOrigin.create(HttpOriginRange.*), AccessControlAllowMethods.create(HttpMethods.GET, HttpMethods.OPTIONS)) {
+
+                  completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
+                    cb =>
+                      lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
+                  }
                 }
-              }
-              case _ => 
+              case _ =>
                 complete(HttpResponse(status = StatusCodes.BadRequest))
-              }
-	  }
-        } ~ get {
-          complete(HttpResponse(status = StatusCodes.BadRequest))
+            }
         }
-      } ~ path("diagram" / Remaining) {
+      } ~ get {
+        complete(HttpResponse(status = StatusCodes.BadRequest))
+      }
+    } ~ path("diagram" / Remaining) {
       fileName =>
         get {
           streamFromClasspath(s"/diagram/$fileName")

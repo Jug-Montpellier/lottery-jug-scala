@@ -16,7 +16,7 @@ object EventBriteParser {
     } yield profile
   }
 
-  def parse(buffer: ByteBuffer): Xor[Error, Attendees] = parseByteBuffer(buffer)
+  def parseEvent(buffer: ByteBuffer): Xor[Error, Attendees] = parseByteBuffer(buffer)
     .flatMap {
       json =>
         val c = json.cursor
@@ -24,6 +24,16 @@ object EventBriteParser {
           pagination <- c.get[Pagination]("pagination")
           attendees <- c.get[List[Attendeed]]("attendees")
         } yield Attendees(pagination = pagination, attendees = attendees)
+    }
+
+  def parseEventList(buffer: ByteBuffer): Xor[Error, List[Event]] = parseByteBuffer(buffer)
+    .flatMap {
+      json =>
+        val c = json.cursor
+        for {
+          pagination <- c.get[Pagination]("pagination")
+          events <- c.get[List[Event]]("events")
+        } yield events
     }
 
 

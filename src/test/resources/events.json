@@ -1,0 +1,79 @@
+{
+  "pagination": {
+    "object_count": 1,
+    "page_number": 1,
+    "page_size": 50,
+    "page_count": 1,
+    "continuation": "eyJwYWdlIjogMn0"
+  },
+  "events": [
+    {
+      "name": {
+        "text": "Entrez dans le NoSQL avec MongoDB",
+        "html": "Entrez dans le NoSQL avec MongoDB"
+      },
+      "description": {
+        "text": "MongoDB est la base la plus connue du monde NoSQL. Cette base orient\u00e9 document gagne en popularit\u00e9 avec le temps et s'affirme comme un des grand nom de cet \u00e9cosyst\u00e8me. Venez d\u00e9couvrir ou red\u00e9couvrir cette base de donn\u00e9es et vous laissez emport\u00e9 dans le monde NoSQL.",
+        "html": "<P><SPAN>MongoDB est la base la plus connue du monde NoSQL. Cette base orient\u00e9 document gagne en popularit\u00e9 avec le temps et s'affirme comme un des grand nom de cet \u00e9cosyst\u00e8me. Venez d\u00e9couvrir ou red\u00e9couvrir cette base de donn\u00e9es et vous laissez emport\u00e9 dans le monde NoSQL.<\/SPAN><\/P>"
+      },
+      "id": "29249804954",
+      "url": "https://www.eventbrite.fr/e/billets-entrez-dans-le-nosql-avec-mongodb-29249804954?aff=ebapi",
+      "start": {
+        "timezone": "Europe/Paris",
+        "local": "2016-11-16T19:00:00",
+        "utc": "2016-11-16T18:00:00Z"
+      },
+      "end": {
+        "timezone": "Europe/Paris",
+        "local": "2016-11-16T22:00:00",
+        "utc": "2016-11-16T21:00:00Z"
+      },
+      "created": "2016-11-08T14:01:33Z",
+      "changed": "2016-11-08T14:06:19Z",
+      "capacity": 170,
+      "capacity_is_custom": true,
+      "status": "live",
+      "currency": "EUR",
+      "listed": true,
+      "shareable": true,
+      "online_event": false,
+      "tx_time_limit": 480,
+      "hide_start_date": false,
+      "hide_end_date": false,
+      "locale": "fr_FR",
+      "is_locked": false,
+      "privacy_setting": "unlocked",
+      "is_series": false,
+      "is_series_parent": false,
+      "is_reserved_seating": false,
+      "source": "create_2.0",
+      "logo_id": "25732701",
+      "organizer_id": "1464915124",
+      "venue_id": "17309588",
+      "category_id": "102",
+      "subcategory_id": null,
+      "format_id": "1",
+      "resource_uri": "https://www.eventbriteapi.com/v3/events/29249804954/",
+      "logo": {
+        "crop_mask": {
+          "top_left": {
+            "x": 0,
+            "y": 287
+          },
+          "width": 792,
+          "height": 396
+        },
+        "original": {
+          "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F25732701%2F20095063632%2F1%2Foriginal.jpg?s=e8eba624a4f1c5275d33f2f17d306a9b",
+          "width": 793,
+          "height": 1121
+        },
+        "id": "25732701",
+        "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F25732701%2F20095063632%2F1%2Foriginal.jpg?h=200&w=450&rect=0%2C287%2C792%2C396&s=3583f684e71f0c28eb1ec009db1b151c",
+        "aspect_ratio": "2",
+        "edge_color": "#ffffff",
+        "edge_color_set": true
+      }
+    }
+  ]
+}
