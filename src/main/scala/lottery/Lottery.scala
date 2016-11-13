@@ -39,7 +39,9 @@ class Lottery extends Actor with ActorLogging {
 
   override def preStart(): Unit = {
     super.preStart()
-    self ! RefreshCurrentEventId
+
+    context.system.scheduler.schedule(5 seconds, cacheTTL seconds, self, RefreshCurrentEventId)
+
   }
 
   def take(n: Int, attentees: List[Attendeed]) = shuffle(attentees).take(n)
@@ -56,35 +58,25 @@ class Lottery extends Actor with ActorLogging {
           log.warning(s"More than one event is open !\n choosing ${events(0)}")
         else
           log.info(s"Current event ${events(0)}")
-        self ! RefreshCache(WinnerRequest(currentEventId, 0, None ))
+        self ! RefreshCache(WinnerRequest(currentEventId, 0, None))
+
       }
 
 
     case winnerrequest@WinnerRequest(eventId, n, cb) => eventId.orElse(currentEventId).map {
       eventId =>
-        cache.get(eventId)
-          .map {
-            attendees =>
-              cb.map(_(take(n, attendees)))
-          }
-          .orElse {
-            log.info("Asking event brite...")
-            context.actorOf(Props(new LotteryRequester(AttendeesRequest(self, winnerrequest.copy(eventId=Some(eventId))))), "requestor")
-            None
-          }
+        val attendees = cache.getOrElse(eventId, List())
+        cb.map(_ (take(n, attendees)))
     }.orElse {
       log.warning("No opened event!")
-      cb.map(_(Nil))
+      cb.map(_ (Nil))
       None
     }
 
     case AttenteesResponse(WinnerRequest(eventId, number, cb), attendees) => eventId.map {
       eventId =>
         cache += eventId -> attendees
-        cb.map(_(take(number, attendees)))
-        //Schedule a cache eviction.
-        context.system.scheduler.scheduleOnce(cacheTTL seconds, self, RefreshCache(WinnerRequest(Some(eventId), 0, None)))
-
+        cb.map(_ (take(number, attendees)))
     }
 
     case RefreshCache(winnerRequest) =>
@@ -100,7 +92,6 @@ class Lottery extends Actor with ActorLogging {
         .flatMap(s => Unmarshal(s.entity).to[EventPage])
         .pipeTo(self)
 
-      context.system.scheduler.scheduleOnce(cacheTTL seconds, self, RefreshCurrentEventId)
 
     case e =>
       log.warning(s"WTF: $e")
