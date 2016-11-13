@@ -19,6 +19,8 @@ import akka.http.scaladsl.model.headers.HttpOriginRange
 
 import scala.io.StdIn
 
+import ch.megard.akka.http.cors.CorsDirectives._
+
 object WebServer extends App {
 
   implicit val system = ActorSystem("my-system")
@@ -57,7 +59,9 @@ object WebServer extends App {
 
   val lottery = system.actorOf(Props[Lottery], "lottery")
 
-  val route =
+
+
+  val route = cors() {
     path("") {
       get {
         streamFromClasspath("/public/index.html")
@@ -81,13 +85,13 @@ object WebServer extends App {
                 }
 
               case i if i > 0 =>
-                respondWithHeaders(AccessControlAllowOrigin.create(HttpOriginRange.*), AccessControlAllowMethods.create(HttpMethods.GET, HttpMethods.OPTIONS)) {
+                //respondWithHeaders(AccessControlAllowOrigin.create(HttpOriginRange.*), AccessControlAllowMethods.create(HttpMethods.GET, HttpMethods.OPTIONS)) {
 
                   completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
                     cb =>
                       lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
                   }
-                }
+                //}
               case _ =>
                 complete(HttpResponse(status = StatusCodes.BadRequest))
             }
@@ -101,6 +105,7 @@ object WebServer extends App {
           streamFromClasspath(s"/diagram/$fileName")
         }
     }
+  }
 
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", 8080)
 
