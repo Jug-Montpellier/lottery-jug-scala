@@ -10,25 +10,26 @@ import scala.concurrent.duration.DurationInt
 import scala.util.Random.shuffle
 import scala.concurrent.ExecutionContext.Implicits.global
 import akka.pattern.pipe
+import lottery.LotteryHttpServerProtocol.{EventAttendees, Start}
 
 
 object LotteryProtocol {
 
-  case class WinnerRequest(eventId: Option[String], number: Int, cb: Option[List[Attendeed] => Unit])
+  case object Stop
 
-  case class AttendeesRequest(sender: ActorRef, request: WinnerRequest)
+  case class WinnerRequest(eventId: Option[String], number: Int)
 
-  case class AttenteesResponse(request: WinnerRequest, attendees: List[Attendeed])
+  case class AttendeesRequest(sender: ActorRef, eventId: String)
 
-  case class RefreshCache(winnerRequest: WinnerRequest)
+  case class AttendeesResponse(eventId: String, attendees: List[Attendeed])
+
+  case object RefreshCache
 
   case object RefreshCurrentEventId
 
-  case class Events(cb: (List[Event]) => Unit)
-
 }
 
-class Lottery extends Actor with ActorLogging {
+class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
 
 
 
@@ -41,10 +42,12 @@ class Lottery extends Actor with ActorLogging {
 
   private var cache = Map[String, List[Attendeed]]()
 
-
+  private val httpServer = context.actorOf(httpServerProps, "http-server")
 
   override def preStart(): Unit = {
     super.preStart()
+
+    httpServer ! Start
 
     context.system.scheduler.schedule(5 seconds, cacheTTL seconds, self, RefreshCurrentEventId)
 
@@ -66,38 +69,23 @@ class Lottery extends Actor with ActorLogging {
           log.warning(s"More than one event is open !\n choosing ${events(0)}")
         else
           log.info(s"Current event ${events(0)}")
-        self ! RefreshCache(WinnerRequest(currentEventId, 0, None))
+        self ! RefreshCache
 
       }
 
-    case Events(cb) =>
-      val response = cache.map {
-        case (k,v) => Event(k, Some(v.size))
+
+    case AttendeesResponse(eventId, attendees) =>
+      httpServer ! EventAttendees(eventId, attendees)
+
+
+
+    case RefreshCache =>
+      currentEventId.foreach {
+        eventId =>
+          log.info(s"EventId cleared from cache")
+          context.actorOf(Props(new LotteryRequester(AttendeesRequest(self, eventId))), "requestor")
+
       }
-
-      cb(response.toList)
-
-
-
-    case winnerrequest@WinnerRequest(eventId, n, cb) => eventId.orElse(currentEventId).map {
-      eventId =>
-        val attendees = cache.getOrElse(eventId, List())
-        cb.map(_ (take(n, attendees)))
-    }.orElse {
-      log.warning("No opened event!")
-      cb.map(_ (Nil))
-      None
-    }
-
-    case AttenteesResponse(WinnerRequest(eventId, number, cb), attendees) => eventId.map {
-      eventId =>
-        cache += eventId -> attendees
-        cb.map(_ (take(number, attendees)))
-    }
-
-    case RefreshCache(winnerRequest) =>
-      log.info(s"EventId: ${winnerRequest.eventId} cleared from cache")
-      context.actorOf(Props(new LotteryRequester(AttendeesRequest(self, winnerRequest))), "requestor")
 
     case RefreshCurrentEventId =>
       import io.circe.generic.auto._
@@ -107,6 +95,11 @@ class Lottery extends Actor with ActorLogging {
       http.singleRequest(HttpRequest(uri = eventsURI))
         .flatMap(s => Unmarshal(s.entity).to[EventPage])
         .pipeTo(self)
+
+
+    case Stop =>
+      httpServer ! Stop
+
 
 
     case e =>

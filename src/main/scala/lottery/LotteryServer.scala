@@ -1,25 +1,10 @@
 package lottery
 
 import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.marshalling.ToResponseMarshaller
-import akka.http.scaladsl.server.StandardRoute
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.StreamConverters
-
-import scala.language.implicitConversions
-import de.heikoseeberger.akkahttpcirce.CirceSupport._
-import io.circe.generic.auto._
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.server._
-import StatusCodes._
-import Directives._
-import akka.http.javadsl.model.headers.{AccessControlAllowMethods, AccessControlAllowOrigin}
-import akka.http.scaladsl.model.headers.HttpOriginRange
 
 import scala.io.StdIn
-
-import ch.megard.akka.http.cors.CorsDirectives._
+import scala.language.implicitConversions
 
 object WebServer extends App {
 
@@ -29,100 +14,9 @@ object WebServer extends App {
   implicit val executionContext = system.dispatcher
 
 
-  val extenstionExtractor = "(?!\\.)[a-z]+$$".r
+  val lottery = system.actorOf(Props(new Lottery(Props[LotteryHttpServer])), "lottery")
 
+  //StdIn.readLine() // let it run until user presses return
 
-  implicit def htmlUTF8(content: String): StandardRoute = complete(HttpResponse(entity = HttpEntity(ContentTypes.`text/html(UTF-8)`, content)))
-
-  /**
-    * Complete the request by streaming a classpath content.
-    *
-    * @param path
-    * @return
-    */
-  def streamFromClasspath(path: String): StandardRoute = {
-    val entity = for {
-      ext <- extenstionExtractor.findFirstIn(path)
-      contentType <- ext match {
-        case "html" => Some(MediaTypes.`text/html`.withCharset(HttpCharsets.`UTF-8`))
-        case "png" => Some(MediaTypes.`image/png`.toContentType)
-        case _ => None
-      }
-      inputStream <- Option(getClass.getResourceAsStream(path))
-    } yield HttpEntity(contentType = contentType, StreamConverters.fromInputStream(() => inputStream))
-
-    entity.map(complete(_))
-      .getOrElse(
-        complete(NotFound, "Nope"))
-  }
-
-
-  val lottery = system.actorOf(Props[Lottery], "lottery")
-
-
-
-  val route = cors() {
-    path("") {
-      get {
-        streamFromClasspath("/public/index.html")
-      }
-    } ~ path("events") {
-      get {
-        completeWith(implicitly[ToResponseMarshaller[List[Event]]]) {
-          cb =>
-            lottery ! LotteryProtocol.Events(cb)
-        }
-      }
-    } ~ path("winners") {
-      get {
-        parameters('nb.as[Int]) {
-          (n: Int) =>
-            n match {
-              case 0 =>
-                completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
-                  cb =>
-                    cb(List())
-                }
-
-              case i if i > 0 =>
-                //respondWithHeaders(AccessControlAllowOrigin.create(HttpOriginRange.*), AccessControlAllowMethods.create(HttpMethods.GET, HttpMethods.OPTIONS)) {
-
-                  completeWith(implicitly[ToResponseMarshaller[List[Attendeed]]]) {
-                    cb =>
-                      lottery ! LotteryProtocol.WinnerRequest(None, n, Some(cb))
-                  }
-                //}
-              case _ =>
-                complete(HttpResponse(status = StatusCodes.BadRequest))
-            }
-        }
-      } ~ get {
-        complete(HttpResponse(status = StatusCodes.BadRequest))
-      }
-    } ~ path("diagram" / Remaining) {
-      fileName =>
-        get {
-          streamFromClasspath(s"/diagram/$fileName")
-        }
-    }
-  }
-
-  val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", 8080)
-
-  println(s"Server online at http://localhost:8080/\nPress Ctrl-C or send SIGTERM to stop...")
-
-
-  sys.addShutdownHook({
-    println("Graceful stop")
-    bindingFuture
-      .flatMap(_.unbind()) // trigger unbinding from the port
-      .onComplete(_ => system.terminate()) // and shutdown when done
-  })
-
-  /*
-  StdIn.readLine() // let it run until user presses return
-  bindingFuture
-    .flatMap(_.unbind()) // trigger unbinding from the port
-    .onComplete(_ => system.terminate()) // and shutdown when done
-*/
+  //lottery ! LotteryProtocol.Stop
 }

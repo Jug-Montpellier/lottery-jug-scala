@@ -1,26 +1,32 @@
 @startuml
+participant Server
 Actor me
-participant LotteryServer
-participant Lottery
-participant LotteryRequester
-participant EventBrite
-me -> LotteryServer: Ask a winner
-LotteryServer -> Lottery: Ask a winner
+participant App
+activate App
+App -> Lottery: LoadAttendees
 activate Lottery
-Lottery -> LotteryRequester: Ask for attentees
-LotteryRequester -> EventBrite
-EventBrite -> LotteryRequester
-LotteryRequester -> Lottery: Attendees list
+Lottery -> Requester: Ask for attentees
+Requester -> EventBrite
+EventBrite -> Requester
+Requester -> Lottery: Attendees list
 activate Lottery
 loop remaining pages
-Lottery -> LotteryRequester: Ask for attentees
-LotteryRequester -> EventBrite
-EventBrite -> LotteryRequester
-LotteryRequester -> Lottery: Attendees list
+Lottery -> Requester: Ask for attentees
+Requester -> EventBrite
+EventBrite -> Requester
+Requester -> Lottery: Attendees list
 end
+Lottery -> Server: Push(winner)
 deactivate Lottery
 
-Lottery -> LotteryServer: Winner
+deactivate App
+participant Lottery
+participant Requester
+participant EventBrite
+me -> Server: Ask for winner(n)
+Server -> Lottery: Ask next winner(n)
+Server -> me
+
 deactivate Lottery
 
 @enduml
