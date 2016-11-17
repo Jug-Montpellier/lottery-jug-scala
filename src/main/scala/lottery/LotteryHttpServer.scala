@@ -11,7 +11,7 @@ import akka.http.scaladsl.server.{StandardRoute, _}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.StreamConverters
 import ch.megard.akka.http.cors.CorsDirectives._
-import lottery.LotteryHttpServerProtocol.{EventAttendees, Shuffle, Start}
+import lottery.LotteryHttpServerProtocol.{ClearEvents, EventAttendees, Shuffle, Start}
 import de.heikoseeberger.akkahttpcirce.CirceSupport._
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -28,6 +28,8 @@ import scala.util.Random.shuffle
 object LotteryHttpServerProtocol {
 
   case object Start
+
+  case object ClearEvents
 
   case class EventAttendees(eventId: String, attendees: List[Attendeed])
 
@@ -143,6 +145,10 @@ class LotteryHttpServer extends Actor with ActorLogging {
       prepareNewResponse(shuffle(attendees))
 
       this.attendees = attendees
+
+    case ClearEvents =>
+      events = Map()
+      attendees = List()
 
     case Shuffle =>
       attendees = shuffle(attendees)

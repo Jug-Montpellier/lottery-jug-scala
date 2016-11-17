@@ -10,7 +10,7 @@ import scala.concurrent.duration.DurationInt
 import scala.util.Random.shuffle
 import scala.concurrent.ExecutionContext.Implicits.global
 import akka.pattern.pipe
-import lottery.LotteryHttpServerProtocol.{EventAttendees, Start}
+import lottery.LotteryHttpServerProtocol.{ClearEvents, EventAttendees, Start}
 
 
 object LotteryProtocol {
@@ -62,6 +62,7 @@ class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
       if (events.size == 0) {
         currentEventId = None
         log.warning("No opened event!")
+        httpServer ! ClearEvents
       }
       else {
         currentEventId = Some(events(0).id)

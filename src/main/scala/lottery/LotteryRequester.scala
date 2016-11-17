@@ -63,14 +63,16 @@ class LotteryRequester(attendeesRequest: AttendeesRequest) extends Actor with Ac
   override def receive: Receive = {
 
     case (page: Int, a: Attendees) =>
+      log.info(awaitedPages.toString())
       attendees ++= a.attendees
       awaitedPages -= page
+      log.info(awaitedPages.toString())
 
-      if (awaitedPages.isEmpty)
+      if (awaitedPages.isEmpty) {
         attendeesRequest.sender ! AttendeesResponse(attendeesRequest.eventId, attendees)
-
-      log.info(attendees.size + " attendees")
-      context.stop(self)
+        log.info(attendees.size + " attendees")
+        context.stop(self)
+      }
     case e =>
       log.warning(s"WTF $e")
 
