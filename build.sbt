@@ -7,17 +7,17 @@ name := "lottery-jug-scala"
 
 version := "1.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.0"
 
-val akkaVersion = "2.4.11"
-val circeVersion = "0.5.2"
+val akkaVersion = "2.4.14"
+val circeVersion = "0.6.1"
 
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint", "-Xlog-implicits")
 
 scalacOptions := Seq("-deprecation", "-feature", "-language:postfixOps")
 
-libraryDependencies += "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion exclude("org.slf4j", "slf4j-log4j12")
+libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.0" exclude("org.slf4j", "slf4j-log4j12")
 
 libraryDependencies ++= Seq(
   "circe-core",
@@ -26,7 +26,7 @@ libraryDependencies ++= Seq(
   "circe-optics"
 ).map(d => "io.circe" %% d % circeVersion)
 
-libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.10.1"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.11.0"
 
 libraryDependencies += "com.typesafe" % "config" % "1.2.1"
 
