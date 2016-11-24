@@ -62,11 +62,11 @@ class LotteryHttpServer extends Actor with ActorLogging {
               case 0 =>
                 jsonUTF8("[]")
 
-              case i if i == 1 => `1`
-              case i if i == 2 => `2`
-              case i if i == 3 => `3`
-              case i if i == 4 => `4`
-              case i if i == 5 => `5`
+              case 1 => `1`
+              case 2 => `2`
+              case 3 => `3`
+              case 4 => `4`
+              case 5 => `5`
 
               case i if i > 5 => jsonUTF8(attendees.take(i).asJson.noSpaces)
 
