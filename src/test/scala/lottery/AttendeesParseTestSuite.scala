@@ -1,6 +1,5 @@
 package lottery
 
-import cats.data.Xor.{Left, Right}
 import java.nio.ByteBuffer
 import java.nio.file.{Files, Paths}
 import org.scalatest.Matchers
