@@ -17,7 +17,7 @@ javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint", "-Xlog-implic
 
 scalacOptions := Seq("-deprecation", "-feature", "-language:postfixOps")
 
-libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.0" exclude("org.slf4j", "slf4j-log4j12")
+libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.2" exclude("org.slf4j", "slf4j-log4j12")
 
 libraryDependencies ++= Seq(
   "circe-core",
