@@ -9,8 +9,8 @@ version := "1.0"
 
 scalaVersion := "2.12.1"
 
-val akkaVersion = "2.4.14"
-val circeVersion = "0.6.1"
+val akkaVersion = "2.4.16"
+val circeVersion = "0.7.0"
 
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint", "-Xlog-implicits")

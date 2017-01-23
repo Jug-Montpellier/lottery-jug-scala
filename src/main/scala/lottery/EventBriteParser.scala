@@ -18,7 +18,7 @@ object EventBriteParser {
   def parseEvent(buffer: ByteBuffer): Either[Error, Attendees] = parseByteBuffer(buffer)
     .flatMap {
       json =>
-        val c = json.cursor
+        val c = json.hcursor
         for {
           pagination <- c.get[Pagination]("pagination")
           attendees <- c.get[List[Attendeed]]("attendees")
@@ -28,7 +28,7 @@ object EventBriteParser {
   def parseEventList(buffer: ByteBuffer): Either[Error, List[Event]] = parseByteBuffer(buffer)
     .flatMap {
       json =>
-        val c = json.cursor
+        val c = json.hcursor
         for {
           pagination <- c.get[Pagination]("pagination")
           events <- c.get[List[Event]]("events")
