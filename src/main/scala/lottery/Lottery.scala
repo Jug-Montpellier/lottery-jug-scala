@@ -61,7 +61,7 @@ class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
     case EventPage(pagination, events) =>
       if (events.size == 0) {
         currentEventId = None
-        log.warning("No opened event!")
+        log.debug("No opened event!")
         httpServer ! ClearEvents
       }
       else {
@@ -69,7 +69,7 @@ class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
         if (events.size > 1)
           log.warning(s"More than one event is open !\n choosing ${events(0)}")
         else
-          log.info(s"Current event ${events(0)}")
+          log.debug(s"Current event ${events(0)}")
         self ! RefreshCache
 
       }
@@ -83,7 +83,7 @@ class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
     case RefreshCache =>
       currentEventId.foreach {
         eventId =>
-          log.info(s"EventId cleared from cache")
+          log.debug(s"EventId cleared from cache")
           context.actorOf(Props(new LotteryRequester(AttendeesRequest(self, eventId))), "requestor")
 
       }

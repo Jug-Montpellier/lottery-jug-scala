@@ -139,7 +139,8 @@ class LotteryHttpServer extends Actor with ActorLogging {
       }
 
     case EventAttendees(eventId, attendees) =>
-
+      if(attendees != this.attendees)
+        log.info(attendees.size + " attendees")
       events = events + (eventId -> EventDescription(eventId, attendees.size))
 
       prepareNewResponse(shuffle(attendees))
