@@ -10,30 +10,30 @@ import io.circe.generic.auto._
 object EventBriteParser {
 
   implicit val attendeedDecoder = new Decoder[Attendeed] {
-    override def apply(c: HCursor): Result[Attendeed] = for {
-      profile <- c.get[Attendeed]("profile")
-    } yield profile
+    override def apply(c: HCursor): Result[Attendeed] =
+      for {
+        profile <- c.get[Attendeed]("profile")
+      } yield profile
   }
 
-  def parseEvent(buffer: ByteBuffer): Either[Error, Attendees] = parseByteBuffer(buffer)
-    .flatMap {
-      json =>
+  def parseEvent(buffer: ByteBuffer): Either[Error, Attendees] =
+    parseByteBuffer(buffer)
+      .flatMap { json =>
         val c = json.hcursor
         for {
           pagination <- c.get[Pagination]("pagination")
-          attendees <- c.get[List[Attendeed]]("attendees")
+          attendees  <- c.get[List[Attendeed]]("attendees")
         } yield Attendees(pagination = pagination, attendees = attendees)
-    }
+      }
 
-  def parseEventList(buffer: ByteBuffer): Either[Error, List[Event]] = parseByteBuffer(buffer)
-    .flatMap {
-      json =>
+  def parseEventList(buffer: ByteBuffer): Either[Error, List[Event]] =
+    parseByteBuffer(buffer)
+      .flatMap { json =>
         val c = json.hcursor
         for {
           pagination <- c.get[Pagination]("pagination")
-          events <- c.get[List[Event]]("events")
+          events     <- c.get[List[Event]]("events")
         } yield events
-    }
-
+      }
 
 }
