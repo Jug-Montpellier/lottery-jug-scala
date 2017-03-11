@@ -88,7 +88,7 @@ class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
 
     case RefreshCurrentEventId =>
       import io.circe.generic.auto._
-      import de.heikoseeberger.akkahttpcirce.CirceSupport._
+      import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
       implicit val materializer: ActorMaterializer = ActorMaterializer(
         ActorMaterializerSettings(context.system)
       )

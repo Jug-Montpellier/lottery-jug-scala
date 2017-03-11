@@ -17,7 +17,7 @@ import lottery.LotteryHttpServerProtocol.{
   Shuffle,
   Start
 }
-import de.heikoseeberger.akkahttpcirce.CirceSupport._
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import lottery.LotteryProtocol.Stop

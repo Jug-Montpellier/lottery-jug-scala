@@ -38,7 +38,7 @@ class LotteryRequester(attendeesRequest: AttendeesRequest)
 
   override def preStart(): Unit = {
     import EventBriteParser._
-    import de.heikoseeberger.akkahttpcirce.CirceSupport._
+    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
     val eventId = attendeesRequest.eventId
 
