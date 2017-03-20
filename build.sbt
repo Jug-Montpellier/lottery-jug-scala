@@ -10,6 +10,7 @@ version := "1.0"
 scalaVersion := "2.12.1"
 
 val akkaVersion  = "2.4.17"
+val akkaHttpVersion = "10.0.5"
 val circeVersion = "0.7.0"
 
 javacOptions ++= Seq("-source",
@@ -21,7 +22,7 @@ javacOptions ++= Seq("-source",
 
 scalacOptions := Seq("-deprecation", "-feature", "-language:postfixOps")
 
-libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.4" exclude ("org.slf4j", "slf4j-log4j12")
+libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion exclude ("org.slf4j", "slf4j-log4j12")
 
 libraryDependencies ++= Seq(
   "circe-core",
@@ -30,7 +31,7 @@ libraryDependencies ++= Seq(
   "circe-optics"
 ).map(d => "io.circe" %% d % circeVersion)
 
-libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.13.0"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.14.0"
 
 libraryDependencies += "com.typesafe" % "config" % "1.2.1"
 
