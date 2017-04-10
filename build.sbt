@@ -11,7 +11,7 @@ scalaVersion := "2.12.1"
 
 val akkaVersion  = "2.4.17"
 val akkaHttpVersion = "10.0.5"
-val circeVersion = "0.7.0"
+val circeVersion = "0.7.1"
 
 javacOptions ++= Seq("-source",
                      "1.8",
