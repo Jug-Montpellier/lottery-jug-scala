@@ -9,7 +9,7 @@ version := "1.0"
 
 scalaVersion := "2.12.1"
 
-val akkaVersion  = "2.4.17"
+val akkaVersion  = "2.5.0"
 val akkaHttpVersion = "10.0.5"
 val circeVersion = "0.7.1"
 
@@ -21,6 +21,8 @@ javacOptions ++= Seq("-source",
                      "-Xlog-implicits")
 
 scalacOptions := Seq("-deprecation", "-feature", "-language:postfixOps")
+
+libraryDependencies ++= Seq("akka-stream").map("com.typesafe.akka" %% _ % akkaVersion)
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion exclude ("org.slf4j", "slf4j-log4j12")
 
