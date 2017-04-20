@@ -2,6 +2,7 @@ package lottery
 
 import akka.actor.{ ActorSystem, Props }
 import akka.stream.ActorMaterializer
+import org.slf4j.LoggerFactory
 
 import scala.io.StdIn
 import scala.language.implicitConversions

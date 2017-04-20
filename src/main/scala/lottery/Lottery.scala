@@ -61,7 +61,7 @@ class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
     case EventPage(pagination, events) =>
       if (events.size == 0) {
         currentEventId = None
-        log.debug("No opened event!")
+        log.warning("No opened event!")
         httpServer ! ClearEvents
       } else {
         currentEventId = Some(events(0).id)

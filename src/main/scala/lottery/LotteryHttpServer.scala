@@ -10,7 +10,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ StandardRoute, _ }
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.StreamConverters
-import ch.megard.akka.http.cors.CorsDirectives._
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import lottery.LotteryHttpServerProtocol.{
   ClearEvents,
   EventAttendees,

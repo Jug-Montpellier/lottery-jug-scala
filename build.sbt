@@ -22,7 +22,7 @@ javacOptions ++= Seq("-source",
 
 scalacOptions := Seq("-deprecation", "-feature", "-language:postfixOps")
 
-libraryDependencies ++= Seq("akka-stream").map("com.typesafe.akka" %% _ % akkaVersion)
+libraryDependencies ++= Seq("akka-stream", "akka-slf4j").map("com.typesafe.akka" %% _ % akkaVersion)
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion exclude ("org.slf4j", "slf4j-log4j12")
 
@@ -33,15 +33,15 @@ libraryDependencies ++= Seq(
   "circe-optics"
 ).map(d => "io.circe" %% d % circeVersion)
 
-libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.14.0"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.15.0"
 
 libraryDependencies += "com.typesafe" % "config" % "1.2.1"
 
-libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.21"
+libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.25"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.7"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
-libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.1.11"
+libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.2.1"
 
 libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.1" % "test")
 
