@@ -11,7 +11,7 @@ scalaVersion := "2.12.2"
 
 val akkaVersion  = "2.5.1"
 val akkaHttpVersion = "10.0.6"
-val circeVersion = "0.7.1"
+val circeVersion = "0.8.0"
 
 javacOptions ++= Seq("-source",
                      "1.8",
@@ -49,4 +49,4 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 
 mainClass in Compile := Some("lottery.WebServer")
 
-
+cancelable in Global := true
