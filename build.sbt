@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "circe-optics"
 ).map(d => "io.circe" %% d % circeVersion)
 
-libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.16.0"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.16.1"
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
 
