@@ -1,11 +1,12 @@
 resolvers += Resolver.url(
   "bintray-jug-montpellier",
-  url("https://dl.bintray.com/jug-montpellier/sbt-plugin-releases/")
+  url("https://dl.bintray.com/metabookmarks/sbt-plugin-releases/")
 )(Resolver.ivyStylePatterns)
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.2.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.2.2-RC2")
 
-addSbtPlugin("org.jug-montpellier" % "sbt-plantuml-plugin" % "0.0.4")
+addSbtPlugin("io.metabookmarks" % "sbt-plantuml-plugin" % "0.0.9")
 
-addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.6")
+//addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.1.0")
+addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.10")
 
