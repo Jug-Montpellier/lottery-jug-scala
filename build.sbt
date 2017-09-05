@@ -10,7 +10,7 @@ version := "1.0"
 scalaVersion := "2.12.3"
 
 val akkaVersion  = "2.5.4"
-val akkaHttpVersion = "10.0.9"
+val akkaHttpVersion = "10.0.10"
 val circeVersion = "0.8.0"
 
 javacOptions ++= Seq("-source",
@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "circe-optics"
 ).map(d => "io.circe" %% d % circeVersion)
 
-libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.17.0"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.18.0"
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
 
@@ -43,7 +43,7 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
 libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.2.1"
 
-libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.3" % "test")
+libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.4" % "test")
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
