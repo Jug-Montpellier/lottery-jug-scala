@@ -1,3 +1,4 @@
+classpathTypes += "maven-plugin"
 resolvers += Resolver.url(
   "bintray-jug-montpellier",
   url("https://dl.bintray.com/metabookmarks/sbt-plugin-releases/")
