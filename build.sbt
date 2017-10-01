@@ -9,7 +9,7 @@ version := "1.0"
 
 scalaVersion := "2.12.3"
 
-val akkaVersion  = "2.5.4"
+val akkaVersion  = "2.5.6"
 val akkaHttpVersion = "10.0.10"
 val circeVersion = "0.8.0"
 
@@ -41,7 +41,7 @@ libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.25"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
-libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.2.1"
+libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.2.2"
 
 libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.4" % "test")
 
