@@ -1,6 +1,6 @@
 package lottery
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.{ActorSystem, Props}
 import akka.stream.ActorMaterializer
 import org.slf4j.LoggerFactory
 
@@ -9,7 +9,7 @@ import scala.language.implicitConversions
 
 object WebServer extends App {
 
-  implicit val system       = ActorSystem("my-system")
+  implicit val system = ActorSystem("my-system")
   implicit val materializer = ActorMaterializer()
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext = system.dispatcher

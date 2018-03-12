@@ -1,17 +1,15 @@
 package lottery
 
-import akka.actor.{ Actor, ActorLogging }
+import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.{ ActorMaterializer, ActorMaterializerSettings }
+import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
 import lottery.LotteryProtocol.AttendeesRequest
 
 import io.circe.generic.auto._
 
-class LotteryRequester(attendeesRequest: AttendeesRequest)
-    extends Actor
-    with ActorLogging {
+class LotteryRequester(attendeesRequest: AttendeesRequest) extends Actor with ActorLogging {
 
   import LotteryConf._
   import LotteryProtocol._
@@ -76,8 +74,7 @@ class LotteryRequester(attendeesRequest: AttendeesRequest)
       log.debug(awaitedPages.toString())
 
       if (awaitedPages.isEmpty) {
-        attendeesRequest.sender ! AttendeesResponse(attendeesRequest.eventId,
-                                                    attendees)
+        attendeesRequest.sender ! AttendeesResponse(attendeesRequest.eventId, attendees)
         log.debug(attendees.size + " attendees")
         context.stop(self)
       }

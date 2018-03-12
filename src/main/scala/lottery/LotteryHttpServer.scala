@@ -1,22 +1,17 @@
 package lottery
 
-import akka.actor.{ Actor, ActorLogging }
+import akka.actor.{Actor, ActorLogging}
 import akka.dispatch.Futures
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{ StandardRoute, _ }
+import akka.http.scaladsl.server.{StandardRoute, _}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.StreamConverters
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
-import lottery.LotteryHttpServerProtocol.{
-  ClearEvents,
-  EventAttendees,
-  Shuffle,
-  Start
-}
+import lottery.LotteryHttpServerProtocol.{ClearEvents, EventAttendees, Shuffle, Start}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -27,8 +22,8 @@ import scala.language.implicitConversions
 import scala.util.Random.shuffle
 
 /**
-  * Created by chelebithil on 14/11/2016.
-  */
+ * Created by chelebithil on 14/11/2016.
+ */
 object LotteryHttpServerProtocol {
 
   case object Start
@@ -42,8 +37,8 @@ object LotteryHttpServerProtocol {
 }
 
 class LotteryHttpServer extends Actor with ActorLogging {
-  implicit val system           = context.system
-  implicit val materializer     = ActorMaterializer()
+  implicit val system = context.system
+  implicit val materializer = ActorMaterializer()
   implicit val executionContext = context.dispatcher
 
   var `1` = jsonUTF8("[]")
@@ -59,7 +54,7 @@ class LotteryHttpServer extends Actor with ActorLogging {
   val route = cors() {
     path("winners") {
       get {
-        parameters('nb.as[Int]) { (n: Int) =>
+        parameters(Symbol("nb").as[Int]) { (n: Int) =>
           val resp = n match {
             case 0 =>
               jsonUTF8("[]")
@@ -88,9 +83,8 @@ class LotteryHttpServer extends Actor with ActorLogging {
       }
     } ~ path("events") {
       get {
-        completeWith(implicitly[ToResponseMarshaller[List[EventDescription]]]) {
-          cb =>
-            cb(events.values.toList)
+        completeWith(implicitly[ToResponseMarshaller[List[EventDescription]]]) { cb =>
+          cb(events.values.toList)
         }
       }
     } ~ path("diagram" / Remaining) { fileName =>
@@ -140,7 +134,7 @@ class LotteryHttpServer extends Actor with ActorLogging {
 
     case EventAttendees(eventId, attendees) =>
       if (attendees != this.attendees)
-        log.info(attendees.size + " attendees")
+        log.info(s"${attendees.size} attendees")
       events = events + (eventId -> EventDescription(eventId, attendees.size))
 
       prepareNewResponse(shuffle(attendees))
@@ -176,11 +170,11 @@ class LotteryHttpServer extends Actor with ActorLogging {
     )
 
   /**
-    * Complete the request by streaming a classpath content.
-    *
-    * @param path
-    * @return
-    */
+   * Complete the request by streaming a classpath content.
+   *
+   * @param path
+   * @return
+   */
   def streamFromClasspath(path: String): StandardRoute = {
     val entity = for {
       ext <- extenstionExtractor.findFirstIn(path)
@@ -188,12 +182,10 @@ class LotteryHttpServer extends Actor with ActorLogging {
         case "html" =>
           Some(MediaTypes.`text/html`.withCharset(HttpCharsets.`UTF-8`))
         case "png" => Some(MediaTypes.`image/png`.toContentType)
-        case _     => None
+        case _ => None
       }
       inputStream <- Option(getClass.getResourceAsStream(path))
-    } yield
-      HttpEntity(contentType = contentType,
-                 StreamConverters.fromInputStream(() => inputStream))
+    } yield HttpEntity(contentType = contentType, StreamConverters.fromInputStream(() => inputStream))
 
     entity
       .map(complete(_))

@@ -4,10 +4,8 @@ resolvers += Resolver.url(
   url("https://dl.bintray.com/metabookmarks/sbt-plugin-releases/")
 )(Resolver.ivyStylePatterns)
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.4")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.4.1")
 
-addSbtPlugin("io.metabookmarks" % "sbt-plantuml-plugin" % "0.0.22")
+addSbtPlugin("io.metabookmarks" % "sbt-plantuml-plugin" % "0.0.46")
 
-//addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.1.0")
-addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.10")
-
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.7")

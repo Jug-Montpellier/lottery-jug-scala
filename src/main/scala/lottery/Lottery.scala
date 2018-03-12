@@ -1,16 +1,16 @@
 package lottery
 
-import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.{ ActorMaterializer, ActorMaterializerSettings }
+import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
 
 import scala.concurrent.duration.DurationInt
 import scala.util.Random.shuffle
 import scala.concurrent.ExecutionContext.Implicits.global
 import akka.pattern.pipe
-import lottery.LotteryHttpServerProtocol.{ ClearEvents, EventAttendees, Start }
+import lottery.LotteryHttpServerProtocol.{ClearEvents, EventAttendees, Start}
 
 object LotteryProtocol {
 
@@ -47,10 +47,7 @@ class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
 
     httpServer ! Start
 
-    context.system.scheduler.schedule(5 seconds,
-                                      cacheTTL seconds,
-                                      self,
-                                      RefreshCurrentEventId)
+    context.system.scheduler.schedule(5 seconds, cacheTTL seconds, self, RefreshCurrentEventId)
 
   }
 

@@ -1,7 +1,7 @@
 package lottery
 
 import java.nio.ByteBuffer
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{Files, Paths}
 import org.scalatest.Matchers
 
 import org.scalatest.WordSpec
@@ -27,7 +27,7 @@ class AttendeesParseTestSuite extends WordSpec with Matchers {
     "Parse event list" in {
       EventBriteParser.parseEventList("/events.json") match {
         case Right(s) =>
-        case Left(e)  => fail(e.getMessage)
+        case Left(e) => fail(e.getMessage)
       }
     }
   }

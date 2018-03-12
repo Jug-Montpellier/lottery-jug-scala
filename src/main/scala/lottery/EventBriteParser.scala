@@ -22,7 +22,7 @@ object EventBriteParser {
         val c = json.hcursor
         for {
           pagination <- c.get[Pagination]("pagination")
-          attendees  <- c.get[List[Attendeed]]("attendees")
+          attendees <- c.get[List[Attendeed]]("attendees")
         } yield Attendees(pagination = pagination, attendees = attendees)
       }
 
@@ -32,7 +32,7 @@ object EventBriteParser {
         val c = json.hcursor
         for {
           pagination <- c.get[Pagination]("pagination")
-          events     <- c.get[List[Event]]("events")
+          events <- c.get[List[Event]]("events")
         } yield events
       }
 

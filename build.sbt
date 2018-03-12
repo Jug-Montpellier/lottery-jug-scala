@@ -7,43 +7,47 @@ name := "lottery-jug-scala"
 
 version := "1.0"
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.13.1"
 
-val akkaVersion  = "2.5.17"
-val akkaHttpVersion = "10.1.5"
-val circeVersion = "0.10.0"
+//javacOptions ++= Seq("-source", 13, "-target", 13)
+scalacOptions := Seq("-target:jvm-13")
 
-javacOptions ++= Seq("-source",
-                     "1.8",
+scalafmtOnCompile := true
+
+val akkaVersion  = "2.6.0-RC1"
+val akkaHttpVersion = "10.1.10"
+val circeVersion = "0.12.2"
+
+javacOptions ++= Seq(
                      "-target",
-                     "1.8",
+                     "12",
                      "-Xlint",
                      "-Xlog-implicits")
 
 scalacOptions := Seq("-deprecation", "-feature", "-language:postfixOps")
 
-libraryDependencies ++= Seq("akka-stream", "akka-slf4j").map("com.typesafe.akka" %% _ % akkaVersion)
+libraryDependencies ++= Seq("akka-stream", "akka-actor-typed", "akka-slf4j").map("com.typesafe.akka" %% _ % akkaVersion)
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion exclude ("org.slf4j", "slf4j-log4j12")
 
 libraryDependencies ++= Seq(
   "circe-core",
   "circe-generic",
-  "circe-parser",
-  "circe-optics"
+  "circe-generic-extras",
+  "circe-parser"
 ).map(d => "io.circe" %% d % circeVersion)
 
-libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.22.0"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.29.1"
 
-libraryDependencies += "com.typesafe" % "config" % "1.3.3"
+libraryDependencies += "com.typesafe" % "config" % "1.4.0"
 
-libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.25"
+libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.28"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
-libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.3.1"
+libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.4.1"
 
-libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.5" % "test")
+libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.8" % "test")
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
