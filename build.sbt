@@ -10,7 +10,7 @@ version := "1.0"
 scalaVersion := "2.12.4"
 
 val akkaVersion  = "2.5.11"
-val akkaHttpVersion = "10.0.11"
+val akkaHttpVersion = "10.1.0"
 val circeVersion = "0.9.1"
 
 javacOptions ++= Seq("-source",
@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "circe-optics"
 ).map(d => "io.circe" %% d % circeVersion)
 
-libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.19.0"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.20.0"
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.3"
 
