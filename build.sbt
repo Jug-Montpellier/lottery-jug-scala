@@ -7,7 +7,7 @@ name := "lottery-jug-scala"
 
 version := "1.0"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.5"
 
 val akkaVersion  = "2.5.11"
 val akkaHttpVersion = "10.1.0"
