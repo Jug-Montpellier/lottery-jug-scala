@@ -25,28 +25,6 @@
         </encoder>
     </appender>
 
-    <!--
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-        </layout>
-    </appender>
-    <appender name="JSON_TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-          <level>INFO</level>
-        </filter>
-        <remoteHost>api.logmatic.io</remoteHost>
-        <port>10514</port>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"logmaticKey":"JMMxUOcfSmC87uvyPZ_UOw", "app.env": "prod", "app.service": "stream-reco", "app.version": "0.0.1"}</customFields>
-            <fieldNames>
-                <levelValue>[ignore]</levelValue>
-                <thread>[ignore]</thread>
-            </fieldNames>
-        </encoder>
-        <keepAliveDuration>1 minutes</keepAliveDuration>
-    </appender>
--->
     <logger name="kafka.utils" level="ERROR"/>
 
     <logger name="akka.event.slf4j.Slf4jLogger" level="DEBUG"/>
