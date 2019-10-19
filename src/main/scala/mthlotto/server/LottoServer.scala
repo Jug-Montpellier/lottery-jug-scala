@@ -1,8 +1,7 @@
-package mthlotto
+package mthlotto.server
 
 import akka.actor.typed.{ActorRef, Behavior, PostStop, Signal}
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
-import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
@@ -22,17 +21,28 @@ object LottoServer {
 }
 
 class LottoServer(context: ActorContext[LottoServer.ServerMessage])
-    extends AbstractBehavior[LottoServer.ServerMessage](context) {
-
-  import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+    extends AbstractBehavior[LottoServer.ServerMessage](context)
+    with ResourceHelper {
 
   import akka.actor.typed.scaladsl.adapter._
+  import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
   implicit val system = context.system.toClassic
   implicit val materializer = ActorMaterializer()
+
   val route = cors() {
+    path("") {
+      get {
+        streamFromClasspath("/public/index.html")
+      }
+    } ~
     path("ping") {
       complete("Pong")
+    } ~
+    path("diagram" / Remaining) { fileName =>
+      get {
+        streamFromClasspath(s"/diagram/$fileName")
+      }
     }
   }
 
@@ -45,7 +55,12 @@ class LottoServer(context: ActorContext[LottoServer.ServerMessage])
       Http()
         .bindAndHandle(route, "0.0.0.0", 8888)
         .foreach { httpBinding =>
-          httpBinding
+          sys.addShutdownHook({
+//            log.("Graceful stop")
+            httpBinding.unbind().foreach { _ =>
+              system.terminate()
+            }
+          })
         }
       replyTo ! ServerStarted(8888)
       this

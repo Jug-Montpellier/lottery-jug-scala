@@ -6,6 +6,7 @@ import io.circe.Decoder._
 import io.circe._
 import io.circe.jawn._
 import io.circe.generic.auto._
+import mthlotto.model.{Attendeed, Attendees, Event, Pagination}
 
 object EventBriteParser {
 

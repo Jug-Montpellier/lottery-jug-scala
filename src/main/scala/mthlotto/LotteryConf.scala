@@ -1,4 +1,4 @@
-package lottery
+package mthlotto
 
 import com.typesafe.config.ConfigFactory
 

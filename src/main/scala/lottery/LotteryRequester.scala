@@ -1,56 +1,31 @@
 package lottery
 
 import akka.actor.{Actor, ActorLogging}
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpRequest
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
+
 import lottery.LotteryProtocol.AttendeesRequest
+import mthlotto.eventbrite.EventBriteCapabilities
+import mthlotto.model.Attendees
 
-import io.circe.generic.auto._
+class LotteryRequester(attendeesRequest: AttendeesRequest) extends Actor with EventBriteCapabilities with ActorLogging {
 
-class LotteryRequester(attendeesRequest: AttendeesRequest) extends Actor with ActorLogging {
-
-  import LotteryConf._
   import LotteryProtocol._
-
-  val events =
-    s"https://www.eventbriteapi.com/v3/events/search/?token=$token&organizer.id=$organizerId"
-
-  def attendees(eventId: String, page: Int) =
-    s"https://www.eventbriteapi.com/v3/events/$eventId/attendees/?token=$token&page=$page"
-
-  val http = Http(context.system)
 
   import context.dispatcher
 
-  var awaitedPages = Set[Int]()
-
-  final implicit val materializer: ActorMaterializer = ActorMaterializer(
-    ActorMaterializerSettings(context.system)
-  )
+  val actorSystem = context.system
 
   import akka.pattern.pipe
 
-  var attendees: List[Attendeed] = List()
-
   override def preStart(): Unit = {
-    import EventBriteParser._
-    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
     val eventId = attendeesRequest.eventId
 
-    http
-      .singleRequest(HttpRequest(uri = attendees(eventId, 1)))
-      .flatMap(s => Unmarshal(s.entity).to[Attendees])
+    sendAttendeesRequest(eventId)
       .map { a =>
-        awaitedPages = (1 to a.pagination.page_count).toSet
+        awaitedPages = buildAwaitedPages(a)
         awaitedPages
-          .drop(1)
           .foreach { page =>
-            http
-              .singleRequest(HttpRequest(uri = attendees(eventId, page)))
-              .flatMap(s => Unmarshal(s.entity).to[Attendees])
+            sendAttendeesRequest(eventId, page)
               .map(a => (page, a))
               .pipeTo(self)
           }

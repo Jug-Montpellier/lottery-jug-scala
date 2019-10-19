@@ -16,6 +16,8 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import lottery.LotteryProtocol.Stop
+import mthlotto.model.{Attendeed, EventDescription}
+import mthlotto.server.ResourceHelper
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -36,7 +38,7 @@ object LotteryHttpServerProtocol {
 
 }
 
-class LotteryHttpServer extends Actor with ActorLogging {
+class LotteryHttpServer extends Actor with ResourceHelper with ActorLogging {
   implicit val system = context.system
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = context.dispatcher
@@ -153,8 +155,6 @@ class LotteryHttpServer extends Actor with ActorLogging {
       log.warning(s"WTF $e")
   }
 
-  val extenstionExtractor = "(?!\\.)[a-z]+$$".r
-
   implicit def htmlUTF8(content: String): StandardRoute =
     complete(
       HttpResponse(
@@ -168,28 +168,5 @@ class LotteryHttpServer extends Actor with ActorLogging {
         entity = HttpEntity(ContentTypes.`application/json`, content)
       )
     )
-
-  /**
-   * Complete the request by streaming a classpath content.
-   *
-   * @param path
-   * @return
-   */
-  def streamFromClasspath(path: String): StandardRoute = {
-    val entity = for {
-      ext <- extenstionExtractor.findFirstIn(path)
-      contentType <- ext match {
-        case "html" =>
-          Some(MediaTypes.`text/html`.withCharset(HttpCharsets.`UTF-8`))
-        case "png" => Some(MediaTypes.`image/png`.toContentType)
-        case _ => None
-      }
-      inputStream <- Option(getClass.getResourceAsStream(path))
-    } yield HttpEntity(contentType = contentType, StreamConverters.fromInputStream(() => inputStream))
-
-    entity
-      .map(complete(_))
-      .getOrElse(complete(NotFound, "Nope"))
-  }
 
 }

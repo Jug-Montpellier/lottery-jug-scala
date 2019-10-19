@@ -54,3 +54,5 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 mainClass in Compile := Some("lottery.WebServer")
 
 cancelable in Global := true
+
+runMain / fork := true

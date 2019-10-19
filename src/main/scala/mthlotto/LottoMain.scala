@@ -2,6 +2,7 @@ package mthlotto
 
 import akka.actor.typed.{ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
+import mthlotto.server.LottoServer
 
 object Main {
   def apply(): Behavior[LottoServer.ServerStarted] =

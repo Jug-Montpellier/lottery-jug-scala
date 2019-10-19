@@ -11,6 +11,7 @@ import scala.util.Random.shuffle
 import scala.concurrent.ExecutionContext.Implicits.global
 import akka.pattern.pipe
 import lottery.LotteryHttpServerProtocol.{ClearEvents, EventAttendees, Start}
+import mthlotto.model.{Attendeed, EventPage}
 
 object LotteryProtocol {
 
@@ -30,7 +31,7 @@ object LotteryProtocol {
 
 class Lottery(httpServerProps: Props) extends Actor with ActorLogging {
 
-  import LotteryConf._
+  import mthlotto.LotteryConf._
   import LotteryProtocol._
 
   private val eventsURI =

@@ -1,4 +1,4 @@
-package lottery
+package mthlotto.model
 
 case class Pagination(object_count: Int, page_number: Int, page_size: Int, page_count: Int)
 case class Attendeed(name: Option[String], first_name: Option[String], last_name: Option[String])
