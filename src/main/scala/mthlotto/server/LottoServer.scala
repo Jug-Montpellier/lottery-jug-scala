@@ -16,6 +16,7 @@ object LottoServer {
   sealed trait ServerMessage
 
   case class StartServer(replyTo: ActorRef[ServerStarted]) extends ServerMessage
+  case object Stop extends ServerMessage
   case class ServerStarted(port: Int)
 
 }
@@ -55,14 +56,12 @@ class LottoServer(context: ActorContext[LottoServer.ServerMessage])
       Http()
         .bindAndHandle(route, "0.0.0.0", 8888)
         .foreach { httpBinding =>
-          sys.addShutdownHook({
-//            log.("Graceful stop")
-            httpBinding.unbind().foreach { _ =>
-              system.terminate()
-            }
-          })
+          context.log.info("Starting http server")
+
         }
       replyTo ! ServerStarted(8888)
+      this
+    case Stop =>
       this
   }
 

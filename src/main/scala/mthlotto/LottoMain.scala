@@ -2,6 +2,7 @@ package mthlotto
 
 import akka.actor.typed.{ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
+
 import mthlotto.server.LottoServer
 
 object Main {
@@ -22,8 +23,15 @@ class Main(context: ActorContext[LottoServer.ServerStarted])
   override def onMessage(msg: LottoServer.ServerStarted): Behavior[LottoServer.ServerStarted] = msg match {
     case LottoServer.ServerStarted(port) =>
       context.log.info(s"Server started listening on $port")
-      Behaviors.unhandled
+      Behaviors.same
   }
+
+  sys.addShutdownHook({
+    context.log.info("Graceful stop")
+    son ! LottoServer.Stop
+    context.system.terminate()
+
+  })
 
 }
 
