@@ -4,6 +4,7 @@ import akka.actor.typed.{ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
 
 import mthlotto.server.LottoServer
+import org.slf4j.LoggerFactory
 
 object Main {
   def apply(): Behavior[LottoServer.ServerStarted] =
@@ -18,6 +19,13 @@ class Main(context: ActorContext[LottoServer.ServerStarted])
 
   val son = context.spawn(LottoServer(), "server")
 
+  sys.addShutdownHook({
+    context.log.info("Graceful stop")
+    son ! LottoServer.Stop
+    context.system.terminate()
+
+  })
+
   son ! LottoServer.StartServer(context.self)
 
   override def onMessage(msg: LottoServer.ServerStarted): Behavior[LottoServer.ServerStarted] = msg match {
@@ -26,15 +34,11 @@ class Main(context: ActorContext[LottoServer.ServerStarted])
       Behaviors.same
   }
 
-  sys.addShutdownHook({
-    context.log.info("Graceful stop")
-    son ! LottoServer.Stop
-    context.system.terminate()
-
-  })
-
 }
 
 object LottoMain extends App {
+
+  val logger = LoggerFactory.getLogger(getClass())
+
   ActorSystem[LottoServer.ServerStarted](Main(), "MTHLottoSystem")
 }

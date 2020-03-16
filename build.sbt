@@ -14,9 +14,9 @@ scalacOptions := Seq("-target:jvm-13")
 
 scalafmtOnCompile := true
 
-val akkaVersion  = "2.6.1"
+val akkaVersion  = "2.6.4"
 val akkaHttpVersion = "10.1.11"
-val circeVersion = "0.12.3"
+val circeVersion = "0.13.0"
 
 javacOptions ++= Seq(
                      "-target",
@@ -37,17 +37,17 @@ libraryDependencies ++= Seq(
   "circe-parser"
 ).map(d => "io.circe" %% d % circeVersion)
 
-libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.29.1"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.31.0"
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.0"
 
-libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.29"
+libraryDependencies += "org.slf4j" % "log4j-over-slf4j" % "1.7.30"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
 libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.4.2"
 
-libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.1.0" % "test")
+libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.1.1" % "test")
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
@@ -55,4 +55,4 @@ mainClass in Compile := Some("lottery.WebServer")
 
 cancelable in Global := true
 
-//runMain / fork := true
+fork in Global := true
