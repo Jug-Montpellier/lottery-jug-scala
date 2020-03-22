@@ -1,8 +1,5 @@
-classpathTypes += "maven-plugin"
-resolvers += Resolver.url(
-  "bintray-jug-montpellier",
-  url("https://dl.bintray.com/metabookmarks/sbt-plugin-releases/")
-)(Resolver.ivyStylePatterns)
+
+resolvers += Resolver.bintrayIvyRepo("metabookmarks", "sbt-plugin-releases")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.5.2")
 
